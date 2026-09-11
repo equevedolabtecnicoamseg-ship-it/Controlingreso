@@ -1,0 +1,1 @@
+ALTER TABLE public.visitors ADD COLUMN dni_back_url text DEFAULT NULL;

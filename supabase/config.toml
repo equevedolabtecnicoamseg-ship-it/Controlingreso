@@ -1,0 +1,4 @@
+project_id = "hgtopbobdgxfeunwzlbz"
+
+[functions.extract-dni-data]
+verify_jwt = false
