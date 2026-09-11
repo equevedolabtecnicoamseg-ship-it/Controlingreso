@@ -1,17 +1,17 @@
 name: Bootstrap source from archive
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/bootstrap-source.yml'
   workflow_dispatch:
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
+  issues: read
 
 jobs:
   extract-source:
+    if: github.event_name == 'workflow_dispatch' || github.event.issue.title == '[bootstrap] extract source'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
