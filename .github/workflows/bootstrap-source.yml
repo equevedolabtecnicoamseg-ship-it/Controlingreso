@@ -1,0 +1,71 @@
+name: Bootstrap source from archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract application source safely
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile, shutil
+
+          archive = Path('control-de-ingreso-github-lovable.zip')
+          out = Path('.bootstrap-extracted')
+          if not archive.exists():
+              raise SystemExit('Missing archive: control-de-ingreso-github-lovable.zip')
+          if out.exists():
+              shutil.rmtree(out)
+          out.mkdir()
+
+          with zipfile.ZipFile(archive) as zf:
+              for info in zf.infolist():
+                  normalized = info.filename.replace('\\', '/').lstrip('/')
+                  if not normalized or normalized.endswith('/'):
+                      continue
+                  parts = [p for p in normalized.split('/') if p not in ('', '.', '..')]
+                  if not parts:
+                      continue
+                  target = out.joinpath(*parts)
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  with zf.open(info) as src, open(target, 'wb') as dst:
+                      shutil.copyfileobj(src, dst)
+          PY
+
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='control-de-ingreso-github-lovable.zip' \
+            --exclude='control-de-ingreso-main (1).zip' \
+            .bootstrap-extracted/ ./
+          rm -rf .bootstrap-extracted
+
+      - name: Commit extracted source to main
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit.'
+            exit 0
+          fi
+          git commit -m 'chore: bootstrap application source from archive'
+          git push origin main
