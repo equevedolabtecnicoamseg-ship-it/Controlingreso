@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { VisualThemeProvider } from "@/contexts/ThemeContext";
 import Operations from "./pages/Operations";
 import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
@@ -48,23 +49,25 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<LoginRoute />} />
-            <Route path="/" element={<ProtectedRoute><Operations /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
-            <Route path="/manual" element={<ProtectedRoute><ManualAccess /></ProtectedRoute>} />
-            <Route path="/temporary" element={<ProtectedRoute><TemporaryExits /></ProtectedRoute>} />
-            <Route path="/visits" element={<ProtectedRoute><Visits /></ProtectedRoute>} />
-            <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
-            <Route path="/personnel" element={<ProtectedRoute><Personnel /></ProtectedRoute>} />
-            <Route path="/staff" element={<ProtectedRoute><Staff /></ProtectedRoute>} />
-            <Route path="/qr-generator" element={<ProtectedRoute><QRGenerator /></ProtectedRoute>} />
-            <Route path="/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
+        <VisualThemeProvider>
+          <AuthProvider>
+            <Routes>
+              <Route path="/login" element={<LoginRoute />} />
+              <Route path="/" element={<ProtectedRoute><Operations /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
+              <Route path="/manual" element={<ProtectedRoute><ManualAccess /></ProtectedRoute>} />
+              <Route path="/temporary" element={<ProtectedRoute><TemporaryExits /></ProtectedRoute>} />
+              <Route path="/visits" element={<ProtectedRoute><Visits /></ProtectedRoute>} />
+              <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+              <Route path="/personnel" element={<ProtectedRoute><Personnel /></ProtectedRoute>} />
+              <Route path="/staff" element={<ProtectedRoute><Staff /></ProtectedRoute>} />
+              <Route path="/qr-generator" element={<ProtectedRoute><QRGenerator /></ProtectedRoute>} />
+              <Route path="/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </VisualThemeProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
